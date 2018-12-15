@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"spi-web/app/models"
 	"spi-web/config"
 	"spi-web/utils"
 
@@ -11,6 +12,7 @@ import (
 
 func main() {
 	utils.LoggingSetting(config.Config.LogFile)
+	defer models.Db.Close()
 	e := echo.New()
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
