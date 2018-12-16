@@ -55,7 +55,7 @@ var tableName = "test_admin_users"
 func TestNameNullAdminUser(t *testing.T) {
 	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
 		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
-		_, err := tx.Exec(cmd, "", "aaa@gmail.com", "aaaaaaaaaaaaaaa")
+		_, err := tx.Exec(cmd, "", testUser01.email, testUser01.password)
 		return err
 	})
 	if err.Error() != "CHECK constraint failed: test_admin_users" {
@@ -66,7 +66,7 @@ func TestNameNullAdminUser(t *testing.T) {
 func TestEmailNullAdminUser(t *testing.T) {
 	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
 		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
-		_, err := tx.Exec(cmd, "bbb", "", "bbbbbbbbbbb")
+		_, err := tx.Exec(cmd, testUser01.name, "", testUser01.password)
 		return err
 	})
 	if err.Error() != "CHECK constraint failed: test_admin_users" {
@@ -77,7 +77,7 @@ func TestEmailNullAdminUser(t *testing.T) {
 func TestPasswordNullAdminUser(t *testing.T) {
 	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
 		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
-		_, err := tx.Exec(cmd, "ccc", "ccc@gmail.com", "")
+		_, err := tx.Exec(cmd, testUser01.name, testUser01.email, "")
 		return err
 	})
 	if err.Error() != "CHECK constraint failed: test_admin_users" {
