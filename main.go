@@ -18,6 +18,7 @@ func main() {
 
 	adminGroup := e.Group("/admin")
 	adminGroup.Use(controllers.AdminMiddleWare)
+	adminGroup.POST("/user", controllers.AdminCreateUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Fatalf("ListenAndServe err=%s", err)
