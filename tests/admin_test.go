@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"spi-web/app/models/helpers"
 	"testing"
 
@@ -51,17 +52,6 @@ var testUser01 = &TestAdminUser{
 
 var tableName = "test_admin_users"
 
-func TestCreateAdminUser(t *testing.T) {
-	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
-		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
-		_, err := tx.Exec(cmd, testUser01.name, testUser01.email, testUser01.password)
-		return err
-	})
-	if err != nil {
-		t.Error(err)
-	}
-}
-
 func TestNameNullAdminUser(t *testing.T) {
 	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
 		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
@@ -95,8 +85,27 @@ func TestPasswordNullAdminUser(t *testing.T) {
 	}
 }
 
+func TestDuplicateEmailAdminUser(t *testing.T) {
+	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
+		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
+		_, err := tx.Exec(cmd, testUser01.name, testUser01.email, testUser01.password)
+		return err
+	})
+
+	err = helpers.WithTransaction(Db, func(tx *sql.Tx) error {
+		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
+		_, err := tx.Exec(cmd, "ddd", testUser01.email, "ddddddddddddd")
+		return err
+	})
+
+	if err.Error() != "UNIQUE constraint failed: test_admin_users.email" {
+		t.Error("when user email is duplicated,error should be returned and execute RollBack")
+	}
+}
+
 func TestMain(m *testing.M) {
 	setup()
-	m.Run()
 	defer teardown()
+	ret := m.Run()
+	os.Exit(ret)
 }
