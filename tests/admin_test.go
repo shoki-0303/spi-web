@@ -22,8 +22,8 @@ func setup() {
 	cmd := `CREATE TABLE IF NOT EXISTS test_admin_users (
 						id integer PRIMARY KEY AUTOINCREMENT,
 						name text NOT NULL CHECK (name != ""),
-						email text NOT NULL UNIQUE CHECK (name != ""),
-						password text NOT NULL CHECK (name != ""),
+						email text NOT NULL UNIQUE CHECK (email != ""),
+						password text NOT NULL CHECK (password != ""),
 						admin_level integer default 3)`
 	_, err = Db.Exec(cmd)
 	if err != nil {
@@ -51,14 +51,37 @@ var testUser01 = &TestAdminUser{
 
 var tableName = "test_admin_users"
 
+func TestCreateAdminUser(t *testing.T) {
+	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
+		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
+		_, err := tx.Exec(cmd, testUser01.name, testUser01.email, testUser01.password)
+		return err
+	})
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestNameNullAdminUser(t *testing.T) {
 	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
 		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
-		_, err := tx.Exec(cmd, "", "aaa@gmail.com", "qwrjbjasbdjasd")
+		_, err := tx.Exec(cmd, "", "aaa@gmail.com", "aaaaaaaaaaaaaaa")
 		return err
 	})
 	if err.Error() != "CHECK constraint failed: test_admin_users" {
 		t.Error("when admin user have NULL name, error should be returned and execute RollBack")
+	}
+}
+
+func TestEmailNullAdminUser(t *testing.T) {
+	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
+		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
+		_, err := tx.Exec(cmd, "bbb", "", "bbbbbbbbbbb")
+		fmt.Println(err)
+		return err
+	})
+	if err.Error() != "CHECK constraint failed: test_admin_users" {
+		t.Error("when admin user have NULL email, error should be returned and execute RollBack")
 	}
 }
 
