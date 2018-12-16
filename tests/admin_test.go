@@ -77,11 +77,21 @@ func TestEmailNullAdminUser(t *testing.T) {
 	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
 		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
 		_, err := tx.Exec(cmd, "bbb", "", "bbbbbbbbbbb")
-		fmt.Println(err)
 		return err
 	})
 	if err.Error() != "CHECK constraint failed: test_admin_users" {
 		t.Error("when admin user have NULL email, error should be returned and execute RollBack")
+	}
+}
+
+func TestPasswordNullAdminUser(t *testing.T) {
+	err := helpers.WithTransaction(Db, func(tx *sql.Tx) error {
+		cmd := fmt.Sprintf(`INSERT INTO %s (name, email, password) Values (?, ?, ?)`, tableName)
+		_, err := tx.Exec(cmd, "ccc", "ccc@gmail.com", "")
+		return err
+	})
+	if err.Error() != "CHECK constraint failed: test_admin_users" {
+		t.Error("when admin user have NULL password, error should be returned and execute RollBack")
 	}
 }
 
