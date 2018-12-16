@@ -19,9 +19,9 @@ func init() {
 
 	cmd := `CREATE TABLE IF NOT EXISTS admin_users (
 						id integer PRIMARY KEY AUTOINCREMENT,
-						name text NOT NULL,
-						email text NOT NULL UNIQUE,
-						password text NOT NULL,
+						name text NOT NULL CHECK (name != ""),
+						email text NOT NULL UNIQUE CHECK (email != ""),
+						password text NOT NULL CHECK (password != ""),
 						admin_level integer default 3)`
 	_, err = Db.Exec(cmd)
 	if err != nil {

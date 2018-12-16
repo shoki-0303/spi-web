@@ -9,15 +9,18 @@ import (
 	"spi-web/utils"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
 	utils.LoggingSetting(config.Config.LogFile)
 	defer models.Db.Close()
 	e := echo.New()
+	e.Use(middleware.Logger())
 
 	adminGroup := e.Group("/admin")
 	adminGroup.Use(controllers.AdminMiddleWare)
+	adminGroup.POST("/user", controllers.AdminCreateUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Fatalf("ListenAndServe err=%s", err)
