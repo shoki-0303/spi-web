@@ -26,7 +26,7 @@
       <div class="form-group">
         <label for="password">Password:</label>
         <div class="input-group">
-          <input type="text" class="form-control" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" aria-describedby="passwordHelpBlock">
+          <input type="text" class="form-control" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" aria-describedby="passwordHelpBlock" minlength="8">
         </div>
         <small id="passwordHelpBlock" class="form-text text-muted">Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters.</small>
       </div>
