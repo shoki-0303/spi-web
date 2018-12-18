@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"net/http"
 	"spi-web/app/controllers"
 	"spi-web/app/models"
 	"spi-web/config"
@@ -26,11 +27,24 @@ var t = &Template{
 	templates: template.Must(template.ParseGlob("app/views/*.html")),
 }
 
+func customHTTPErrorHandler(err error, c echo.Context) {
+	code := http.StatusInternalServerError
+	msg := http.StatusText(code)
+	if he, ok := err.(*echo.HTTPError); ok {
+		code = he.Code
+		msg = http.StatusText(code)
+	}
+	errorPage := fmt.Sprintf("%d.html", code)
+	c.Render(code, errorPage, msg)
+	c.Logger().Error(err)
+}
+
 func main() {
 	utils.LoggingSetting(config.Config.LogFile)
 	defer models.Db.Close()
 
 	e := echo.New()
+	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Renderer = t
 	e.Use(middleware.Logger())
 
