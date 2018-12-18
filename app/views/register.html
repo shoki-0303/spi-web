@@ -25,13 +25,23 @@
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <div class="input-group">
-          <input type="text" class="form-control" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" aria-describedby="passwordHelpBlock" minlength="8">
-        </div>
+        <input type="password" class="form-control" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" aria-describedby="passwordHelpBlock" minlength="8" id="myInput">
         <small id="passwordHelpBlock" class="form-text text-muted">Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters.</small>
+        <input type="checkbox" onclick="myFunction()"> show password
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
 </body>
 </html>
+
+<script>
+  function myFunction() {
+    var x = document.getElementById("myInput");
+    if (x.type === "password") {
+    x.type = "text";
+    } else {
+    x.type = "password";
+    }
+  }
+</script>
