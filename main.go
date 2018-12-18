@@ -10,6 +10,7 @@ import (
 	"spi-web/app/models"
 	"spi-web/config"
 	"spi-web/utils"
+	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -34,8 +35,11 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		code = he.Code
 		msg = http.StatusText(code)
 	}
-	errorPage := fmt.Sprintf("%d.html", code)
-	c.Render(code, errorPage, msg)
+	data := map[string]string{
+		"code": strconv.Itoa(code),
+		"msg":  msg,
+	}
+	c.Render(code, "error.html", data)
 	c.Logger().Error(err)
 }
 
