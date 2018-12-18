@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"spi-web/app/models"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/labstack/echo"
 )
@@ -19,9 +20,28 @@ func AdminRegister(c echo.Context) error {
 }
 
 func AdminCreateUser(c echo.Context) error {
-	err := models.CreateAdminUser()
+	name := c.FormValue("name")
+	email := c.FormValue("email")
+	password := c.FormValue("password")
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
-	return err
+
+	adminUser := &models.AdminUser{
+		Name:           name,
+		Email:          email,
+		HashedPassword: string(hashedPassword),
+	}
+
+	err = models.CreateAdminUser(adminUser)
+	if err != nil {
+		return err
+	}
+	return nil
+	// err := models.CreateAdminUser()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// return err
 }
