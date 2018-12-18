@@ -25,7 +25,7 @@ func AdminCreateUser(c echo.Context) error {
 	password := c.FormValue("password")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	adminUser := &models.AdminUser{
@@ -36,7 +36,7 @@ func AdminCreateUser(c echo.Context) error {
 
 	err = models.CreateAdminUser(adminUser)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-	return c.JSON(http.StatusCreated, "success")
+	return nil
 }
