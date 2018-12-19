@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"spi-web/app/models"
 
@@ -38,5 +39,19 @@ func AdminCreateUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-	return nil
+	redirectURL := fmt.Sprintf("/admin/%s", adminUser.Name)
+	return c.Redirect(http.StatusSeeOther, redirectURL)
+}
+
+func ShowAdminUser(c echo.Context) error {
+	name := c.Param("name")
+	adminUser, err := models.GetAdminUser(name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, err)
+	}
+
+	data := map[string]string{
+		"adminUserName": adminUser.Name,
+	}
+	return c.Render(http.StatusOK, "adminUser.html", data)
 }
