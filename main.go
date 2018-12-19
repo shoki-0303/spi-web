@@ -55,6 +55,7 @@ func main() {
 	adminGroup := e.Group("/admin")
 	adminGroup.Use(controllers.AdminMiddleWare)
 	adminGroup.GET("/register", controllers.AdminRegister)
+	adminGroup.GET("/:name", controllers.GetAdminUser)
 	adminGroup.POST("/user", controllers.AdminCreateUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
