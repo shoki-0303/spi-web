@@ -45,8 +45,13 @@ func AdminCreateUser(c echo.Context) error {
 
 func ShowAdminUser(c echo.Context) error {
 	name := c.Param("name")
+	adminUser, err := models.GetAdminUser(name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, err)
+	}
+
 	data := map[string]string{
-		"adminUserName": name,
+		"adminUserName": adminUser.Name,
 	}
 	return c.Render(http.StatusOK, "adminUser.html", data)
 }
