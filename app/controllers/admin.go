@@ -47,6 +47,17 @@ func AdminCreateUser(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, redirectURL)
 }
 
+func ConfirmAdminUser(c echo.Context) error {
+	email := c.FormValue("email")
+	password := c.FormValue("password")
+	isComfirmed, err, adminUser := models.ConfirmAdminUser(email, password)
+	if isComfirmed == true {
+		redirectURL := fmt.Sprintf("/admin/%s", adminUser.Name)
+		return c.Redirect(http.StatusSeeOther, redirectURL)
+	}
+	return echo.NewHTTPError(http.StatusUnauthorized, err)
+}
+
 func ShowAdminUser(c echo.Context) error {
 	name := c.Param("name")
 	adminUser, err := models.GetAdminUser(name)
