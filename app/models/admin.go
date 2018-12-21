@@ -38,6 +38,5 @@ func GetAdminUser(name string) (*AdminUser, error) {
 		}
 		return err
 	})
-	fmt.Println(adminUser)
 	return &adminUser, err
 }
