@@ -48,6 +48,7 @@ func main() {
 	defer models.Db.Close()
 
 	e := echo.New()
+	e.Static("/public/scss", "./app/public/scss")
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Renderer = t
 	e.Use(middleware.Logger())

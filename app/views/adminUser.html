@@ -1,8 +1,27 @@
 <html>
   <head>
     <title>{{.adminUserName}}|spi-web</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../public/scss/main.css">
   </head>
   <body>
-    {{.adminUserName}} page
+    <header>
+      <div class="logo">logo</div>
+    </header>
+    <div class="container">
+      <div class="left-side">
+        <div class="userProfileCard">
+          <img class="userImage">
+          <h2 class="userName">{{.adminUserName}}</h2>
+          <p class="userIntroduction">こんにちは！spi-hack編集部です。就活生のみなさんに役立つ情報を随時お届けします。</p>
+        </div>
+      </div>
+      <div class="main">
+        main
+      </div>
+    </div>
+    <footer>
+      <p>copy right</p>
+    </footer>
   </body>
 </html>
