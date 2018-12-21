@@ -20,6 +20,10 @@ func AdminRegister(c echo.Context) error {
 	return c.Render(http.StatusOK, "register.html", nil)
 }
 
+func AdminLogin(c echo.Context) error {
+	return c.Render(http.StatusOK, "login.html", nil)
+}
+
 func AdminCreateUser(c echo.Context) error {
 	name := c.FormValue("name")
 	email := c.FormValue("email")
