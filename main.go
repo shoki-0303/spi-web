@@ -56,8 +56,10 @@ func main() {
 	adminGroup := e.Group("/admin")
 	adminGroup.Use(controllers.AdminMiddleWare)
 	adminGroup.GET("/register", controllers.AdminRegister)
+	adminGroup.GET("/login", controllers.AdminLogin)
 	adminGroup.GET("/:name", controllers.ShowAdminUser)
 	adminGroup.POST("/user", controllers.AdminCreateUser)
+	adminGroup.POST("/login", controllers.ConfirmAdminUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Fatalf("ListenAndServe err=%s", err)

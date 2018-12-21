@@ -20,6 +20,10 @@ func AdminRegister(c echo.Context) error {
 	return c.Render(http.StatusOK, "register.html", nil)
 }
 
+func AdminLogin(c echo.Context) error {
+	return c.Render(http.StatusOK, "login.html", nil)
+}
+
 func AdminCreateUser(c echo.Context) error {
 	name := c.FormValue("name")
 	email := c.FormValue("email")
@@ -41,6 +45,17 @@ func AdminCreateUser(c echo.Context) error {
 	}
 	redirectURL := fmt.Sprintf("/admin/%s", adminUser.Name)
 	return c.Redirect(http.StatusSeeOther, redirectURL)
+}
+
+func ConfirmAdminUser(c echo.Context) error {
+	email := c.FormValue("email")
+	password := c.FormValue("password")
+	isComfirmed, err, adminUser := models.ConfirmAdminUser(email, password)
+	if isComfirmed == true {
+		redirectURL := fmt.Sprintf("/admin/%s", adminUser.Name)
+		return c.Redirect(http.StatusSeeOther, redirectURL)
+	}
+	return echo.NewHTTPError(http.StatusUnauthorized, err)
 }
 
 func ShowAdminUser(c echo.Context) error {

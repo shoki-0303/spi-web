@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"spi-web/app/models/helpers"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminUser struct {
@@ -38,6 +40,24 @@ func GetAdminUser(name string) (*AdminUser, error) {
 		}
 		return err
 	})
-	fmt.Println(adminUser)
 	return &adminUser, err
+}
+
+func ConfirmAdminUser(email, password string) (bool, error, AdminUser) {
+	var adminUser AdminUser
+	helpers.WithTransaction(Db, func(tx *sql.Tx) error {
+		cmd := fmt.Sprintf(`SELECT name, email, password FROM %s WHERE email = ?`, tablename)
+		row := tx.QueryRow(cmd, email)
+		err := row.Scan(&adminUser.Name, &adminUser.Email, &adminUser.HashedPassword)
+		if err != nil {
+			log.Printf("action=confirmAdminUser err=%s", err)
+		}
+		return err
+	})
+
+	err := bcrypt.CompareHashAndPassword([]byte(adminUser.HashedPassword), []byte(password))
+	if err == nil {
+		return true, nil, adminUser
+	}
+	return false, err, adminUser
 }
