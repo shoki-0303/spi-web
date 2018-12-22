@@ -12,8 +12,10 @@ import (
 
 // AdminMiddleWare : done before processeing related to admin
 func AdminMiddleWare(next echo.HandlerFunc) echo.HandlerFunc {
-	//"ここにadminUserを確かめる処理を書く"
-	return next
+	return func(c echo.Context) error {
+		fmt.Println("admin middleware")
+		return next(c)
+	}
 }
 
 func AdminRegister(c echo.Context) error {
@@ -22,6 +24,10 @@ func AdminRegister(c echo.Context) error {
 
 func AdminLogin(c echo.Context) error {
 	return c.Render(http.StatusOK, "login.html", nil)
+}
+
+func AdminUpdate(c echo.Context) error {
+	return c.Render(http.StatusOK, "update.html", nil)
 }
 
 func AdminCreateUser(c echo.Context) error {
@@ -56,6 +62,10 @@ func ConfirmAdminUser(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, redirectURL)
 	}
 	return echo.NewHTTPError(http.StatusUnauthorized, err)
+}
+
+func UpdateAdminUser(c echo.Context) error {
+	return echo.NewHTTPError(http.StatusConflict, nil)
 }
 
 func ShowAdminUser(c echo.Context) error {
