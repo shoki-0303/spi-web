@@ -48,6 +48,7 @@ func main() {
 	defer models.Db.Close()
 
 	e := echo.New()
+	e.Pre(controllers.MethodOverride)
 	e.Static("/public/scss", "./app/public/scss")
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Renderer = t
@@ -57,9 +58,11 @@ func main() {
 	adminGroup.Use(controllers.AdminMiddleWare)
 	adminGroup.GET("/register", controllers.AdminRegister)
 	adminGroup.GET("/login", controllers.AdminLogin)
+	adminGroup.GET("/update", controllers.AdminUpdate)
 	adminGroup.GET("/:name", controllers.ShowAdminUser)
 	adminGroup.POST("/user", controllers.AdminCreateUser)
 	adminGroup.POST("/login", controllers.ConfirmAdminUser)
+	adminGroup.PATCH("/update", controllers.UpdateAdminUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Fatalf("ListenAndServe err=%s", err)
