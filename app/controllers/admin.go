@@ -13,7 +13,6 @@ import (
 // AdminMiddleWare : done before processeing related to admin
 func AdminMiddleWare(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fmt.Println("admin middleware")
 		return next(c)
 	}
 }
