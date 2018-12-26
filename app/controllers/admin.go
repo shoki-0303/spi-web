@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"spi-web/app/controllers/helpers"
 	"spi-web/app/models"
 
 	"golang.org/x/crypto/bcrypt"
@@ -57,8 +58,11 @@ func ConfirmAdminUser(c echo.Context) error {
 	password := c.FormValue("password")
 	isComfirmed, err, adminUser := models.ConfirmAdminUser(email, password)
 	if isComfirmed == true {
-		redirectURL := fmt.Sprintf("/admin/%s", adminUser.Name)
-		return c.Redirect(http.StatusSeeOther, redirectURL)
+		//user is confirmed and create jwtToken
+		endpoint := "/admin"
+		jwt := helpers.CreateJWTtoken(adminUser)
+		url := helpers.CheckURL(endpoint, adminUser.Name, jwt)
+		return c.Redirect(http.StatusSeeOther, url)
 	}
 	return echo.NewHTTPError(http.StatusUnauthorized, err)
 }
