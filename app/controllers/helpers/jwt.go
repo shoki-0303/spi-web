@@ -8,7 +8,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func CreateJWTtoken(adminUser models.AdminUser) string {
+func CreateJWTtoken(adminUser *models.AdminUser) string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = adminUser.Name

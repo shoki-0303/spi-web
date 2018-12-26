@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"spi-web/app/controllers/helpers"
 	"spi-web/app/models"
@@ -49,8 +48,11 @@ func AdminCreateUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-	redirectURL := fmt.Sprintf("/admin/%s", adminUser.Name)
-	return c.Redirect(http.StatusSeeOther, redirectURL)
+	//user is created and create token
+	endpoint := "/admin/restricted"
+	jwt := helpers.CreateJWTtoken(adminUser)
+	url := helpers.CheckURL(endpoint, adminUser.Name, jwt)
+	return c.Redirect(http.StatusSeeOther, url)
 }
 
 func ConfirmAdminUser(c echo.Context) error {
@@ -60,7 +62,7 @@ func ConfirmAdminUser(c echo.Context) error {
 	if isComfirmed == true {
 		//user is confirmed and create jwtToken
 		endpoint := "/admin/restricted"
-		jwt := helpers.CreateJWTtoken(adminUser)
+		jwt := helpers.CreateJWTtoken(&adminUser)
 		url := helpers.CheckURL(endpoint, adminUser.Name, jwt)
 		return c.Redirect(http.StatusSeeOther, url)
 	}
