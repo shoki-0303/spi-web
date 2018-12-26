@@ -59,7 +59,7 @@ func ConfirmAdminUser(c echo.Context) error {
 	isComfirmed, err, adminUser := models.ConfirmAdminUser(email, password)
 	if isComfirmed == true {
 		//user is confirmed and create jwtToken
-		endpoint := "/admin"
+		endpoint := "/admin/restricted"
 		jwt := helpers.CreateJWTtoken(adminUser)
 		url := helpers.CheckURL(endpoint, adminUser.Name, jwt)
 		return c.Redirect(http.StatusSeeOther, url)
