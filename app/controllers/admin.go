@@ -78,8 +78,10 @@ func ShowAdminUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, err)
 	}
 
+	token := c.QueryParam("token")
 	data := map[string]string{
 		"adminUserName": adminUser.Name,
+		"token":         token,
 	}
 	return c.Render(http.StatusOK, "adminUser.html", data)
 }
