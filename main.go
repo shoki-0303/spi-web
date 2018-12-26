@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"spi-web/app/controllers"
+	"spi-web/app/controllers/helpers"
 	"spi-web/app/models"
 	"spi-web/config"
 	"spi-web/utils"
@@ -48,8 +49,8 @@ func main() {
 	defer models.Db.Close()
 
 	e := echo.New()
-	e.Pre(controllers.MethodOverride)
-	e.Static("/public/scss", "./app/public/scss")
+	e.Pre(helpers.MethodOverride)
+	e.Static("admin/public/scss", "./app/public/scss")
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Renderer = t
 	e.Use(middleware.Logger())
@@ -59,10 +60,16 @@ func main() {
 	adminGroup.GET("/register", controllers.AdminRegister)
 	adminGroup.GET("/login", controllers.AdminLogin)
 	adminGroup.GET("/update", controllers.AdminUpdate)
-	adminGroup.GET("/:name", controllers.ShowAdminUser)
 	adminGroup.POST("/user", controllers.AdminCreateUser)
 	adminGroup.POST("/login", controllers.ConfirmAdminUser)
 	adminGroup.PATCH("/update", controllers.UpdateAdminUser)
+
+	restrected := adminGroup.Group("/restricted")
+	restrected.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		SigningKey:  []byte("secret"),
+		TokenLookup: "query:token",
+	}))
+	restrected.GET("/:name", controllers.ShowAdminUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Fatalf("ListenAndServe err=%s", err)
