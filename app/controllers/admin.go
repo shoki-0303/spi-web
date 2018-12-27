@@ -26,7 +26,11 @@ func AdminLogin(c echo.Context) error {
 }
 
 func AdminUpdate(c echo.Context) error {
-	return c.Render(http.StatusOK, "update.html", nil)
+	token := c.QueryParam("token")
+	data := map[string]string{
+		"token": token,
+	}
+	return c.Render(http.StatusOK, "update.html", data)
 }
 
 func AdminCreateUser(c echo.Context) error {
