@@ -19,7 +19,7 @@ func init() {
 
 	cmd := `CREATE TABLE IF NOT EXISTS admin_users (
 						id integer PRIMARY KEY AUTOINCREMENT,
-						name text NOT NULL CHECK (name != ""),
+						name text NOT NULL UNIQUE CHECK (name != ""),
 						email text NOT NULL UNIQUE CHECK (email != ""),
 						password text NOT NULL CHECK (password != ""),
 						admin_level integer default 3)`
