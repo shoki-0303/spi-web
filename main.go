@@ -61,7 +61,6 @@ func main() {
 	adminGroup.GET("/login", controllers.AdminLogin)
 	adminGroup.POST("/user", controllers.AdminCreateUser)
 	adminGroup.POST("/login", controllers.ConfirmAdminUser)
-	adminGroup.PATCH("/update", controllers.UpdateAdminUser)
 
 	restrected := adminGroup.Group("/restricted")
 	restrected.Use(middleware.JWTWithConfig(middleware.JWTConfig{
@@ -70,6 +69,7 @@ func main() {
 	}))
 	restrected.GET("/:name", controllers.ShowAdminUser)
 	restrected.GET("/update", controllers.AdminUpdate)
+	restrected.PATCH("/update", controllers.UpdateAdminUser)
 
 	if err := e.Start(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Fatalf("ListenAndServe err=%s", err)
