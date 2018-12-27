@@ -7,6 +7,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -74,7 +75,21 @@ func ConfirmAdminUser(c echo.Context) error {
 }
 
 func UpdateAdminUser(c echo.Context) error {
-	return echo.NewHTTPError(http.StatusConflict, nil)
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	oldname := claims["name"].(string)
+
+	rename := c.FormValue("name")
+	adminUser, err := models.UpdateAdminUser(rename, oldname)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusConflict, nil)
+	}
+
+	//update is successed
+	endpoint := "/admin/restricted"
+	jwt := c.QueryParam("token")
+	url := helpers.CheckURL(endpoint, adminUser.Name, jwt)
+	return c.Redirect(http.StatusSeeOther, url)
 }
 
 func ShowAdminUser(c echo.Context) error {
