@@ -13,7 +13,7 @@
 
 <body>
   <div class="container">
-    <form action="/admin/update" method="POST">
+    <form action="/admin/restricted/update?token={{.token}}" method="POST">
       <input type="hidden" name="_method" value="PATCH">
       <div class="form-group">
         <label for="name">Name:</label>
