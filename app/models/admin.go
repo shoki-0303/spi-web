@@ -61,3 +61,22 @@ func ConfirmAdminUser(email, password string) (bool, error, AdminUser) {
 	}
 	return false, err, adminUser
 }
+
+func UpdateAdminUser(rename, oldname string) (AdminUser, error) {
+	var adminUser AdminUser
+	err := helpers.WithTransaction(Db, func(*sql.Tx) error {
+		cmd := fmt.Sprintf(`UPDATE %s SET name = ? WHERE name = ?`, tablename)
+		_, err := Db.Exec(cmd, rename, oldname)
+		if err != nil {
+			log.Printf("action=UpdateAdminUser, err=%s", err)
+		}
+		cmd = fmt.Sprintf(`SELECT name, email, password from %s WHERE name = ?`, tablename)
+		row := Db.QueryRow(cmd, rename)
+		err = row.Scan(&adminUser.Name, &adminUser.Email, &adminUser.HashedPassword)
+		if err != nil {
+			log.Printf("action=UpdateAdminUser err=%s", err)
+		}
+		return err
+	})
+	return adminUser, err
+}
